@@ -172,12 +172,12 @@ show profile (all/block io/context switches/cpu/IPC/page faults/source/swaps) fo
 
 数据存储在磁盘中， mysql有自己的服务，所以mysql服务在获取数据时需要和磁盘发生交互。
 
-select * from table where name=xxx and age=xxx
+select * from table where name=xxx and age=xxx（name和age是组合索引）
 
 + 没有索引下推：先从存储引擎中拉取数据（根据name筛选数据），然后在mysql server中根据age进行数据筛选。
 + 有索引下推：直接在存储引擎中根据name和age筛选获取数据，不需要server做任何的数据筛选。
 
-优点：减少IO量，提高速度，降低内存使用。索引下推唯一的缺点就是需要在磁盘上多做数据的筛选，原来放在内存中的现在放到了磁盘上，这样看起来成本较高，但是数据是排序的，所有的数据时聚集存储的，所以性能影响不会太大，而且整体IO量会大大减少，反而会提升性能。
+优点：减少IO量，减少回表次数，提高速度，降低内存使用。索引下推唯一的缺点就是需要在磁盘上多做数据的筛选，原来放在内存中的现在放到了磁盘上，这样看起来成本较高，但是数据是排序的，所有的数据时聚集存储的，所以性能影响不会太大，而且整体IO量会大大减少，反而会提升性能。
 
 ### 5、MRR   |   FIC
 
@@ -224,7 +224,7 @@ FIC：fast_index_creation
 
 1. 更小的数据类型通常更好
 2. 数据类型简单就好
-3. 尽量避免值为null（在mysql中null不等于null，可为null的列会使得索引、索引优化和值的比较都更加复杂）
+3. 尽量避免值为null（在mysql中为null的列会使得索引、索引优化和值的比较都更加复杂）
 
 ### 2、索引相关优化
 
